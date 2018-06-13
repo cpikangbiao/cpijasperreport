@@ -97,6 +97,26 @@ public class TestResource {
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 
+    @GetMapping("/port")
+    @Timed
+    public ResponseEntity<byte[]> test()  {
+        log.debug("REST request to upload excel xls file for parse ");
+
+        Map<String, Object> parameter = new HashMap<String, Object>();
+//        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
+
+        List<Object> lists = portRepository.findPorts();
+        JRBeanArrayDataSource dataSource =
+            new JRBeanArrayDataSource(lists.toArray());
+
+        byte[] body = jasperReportService.exportBatchPDF("Correspondent.jasper", parameter, dataSource);
+
+
+        HttpHeaders headers=new HttpHeaders();
+        headers.add("Content-Disposition","attachment;filename=11.pdf");
+
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    }
 //
 //    @GetMapping("/pdfs")
 //    @Timed
