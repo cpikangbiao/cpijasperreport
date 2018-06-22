@@ -36,6 +36,9 @@ public class JasperreportTemplate implements Serializable {
     @Column(name = "correspondent_bill_date")
     private Instant correspondentBillDate;
 
+    @Column(name = "is_use")
+    private Boolean isUse;
+
     @Column(name = "version")
     private Integer version;
 
@@ -103,6 +106,19 @@ public class JasperreportTemplate implements Serializable {
         this.correspondentBillDate = correspondentBillDate;
     }
 
+    public Boolean isIsUse() {
+        return isUse;
+    }
+
+    public JasperreportTemplate isUse(Boolean isUse) {
+        this.isUse = isUse;
+        return this;
+    }
+
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
+    }
+
     public Integer getVersion() {
         return version;
     }
@@ -158,6 +174,7 @@ public class JasperreportTemplate implements Serializable {
             ", jasperreportTemplateFile='" + getJasperreportTemplateFile() + "'" +
             ", jasperreportTemplateFileContentType='" + getJasperreportTemplateFileContentType() + "'" +
             ", correspondentBillDate='" + getCorrespondentBillDate() + "'" +
+            ", isUse='" + isIsUse() + "'" +
             ", version=" + getVersion() +
             "}";
     }

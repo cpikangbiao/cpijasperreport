@@ -32,6 +32,8 @@ public class JasperreportTemplateCriteria implements Serializable {
 
     private InstantFilter correspondentBillDate;
 
+    private BooleanFilter isUse;
+
     private IntegerFilter version;
 
     private LongFilter jasperreportTemplateTypeId;
@@ -63,6 +65,14 @@ public class JasperreportTemplateCriteria implements Serializable {
         this.correspondentBillDate = correspondentBillDate;
     }
 
+    public BooleanFilter getIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(BooleanFilter isUse) {
+        this.isUse = isUse;
+    }
+
     public IntegerFilter getVersion() {
         return version;
     }
@@ -85,6 +95,7 @@ public class JasperreportTemplateCriteria implements Serializable {
                 (id != null ? "id=" + id + ", " : "") +
                 (jasperreportTemplateName != null ? "jasperreportTemplateName=" + jasperreportTemplateName + ", " : "") +
                 (correspondentBillDate != null ? "correspondentBillDate=" + correspondentBillDate + ", " : "") +
+                (isUse != null ? "isUse=" + isUse + ", " : "") +
                 (version != null ? "version=" + version + ", " : "") +
                 (jasperreportTemplateTypeId != null ? "jasperreportTemplateTypeId=" + jasperreportTemplateTypeId + ", " : "") +
             "}";

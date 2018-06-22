@@ -84,6 +84,9 @@ public class JasperreportTemplateQueryService extends QueryService<JasperreportT
             if (criteria.getCorrespondentBillDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getCorrespondentBillDate(), JasperreportTemplate_.correspondentBillDate));
             }
+            if (criteria.getIsUse() != null) {
+                specification = specification.and(buildSpecification(criteria.getIsUse(), JasperreportTemplate_.isUse));
+            }
             if (criteria.getVersion() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getVersion(), JasperreportTemplate_.version));
             }

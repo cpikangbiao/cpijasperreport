@@ -23,6 +23,8 @@ public class JasperreportTemplateDTO implements Serializable {
 
     private Instant correspondentBillDate;
 
+    private Boolean isUse;
+
     private Integer version;
 
     private Long jasperreportTemplateTypeId;
@@ -67,6 +69,14 @@ public class JasperreportTemplateDTO implements Serializable {
 
     public void setCorrespondentBillDate(Instant correspondentBillDate) {
         this.correspondentBillDate = correspondentBillDate;
+    }
+
+    public Boolean isIsUse() {
+        return isUse;
+    }
+
+    public void setIsUse(Boolean isUse) {
+        this.isUse = isUse;
     }
 
     public Integer getVersion() {
@@ -121,6 +131,7 @@ public class JasperreportTemplateDTO implements Serializable {
             ", jasperreportTemplateName='" + getJasperreportTemplateName() + "'" +
             ", jasperreportTemplateFile='" + getJasperreportTemplateFile() + "'" +
             ", correspondentBillDate='" + getCorrespondentBillDate() + "'" +
+            ", isUse='" + isIsUse() + "'" +
             ", version=" + getVersion() +
             "}";
     }

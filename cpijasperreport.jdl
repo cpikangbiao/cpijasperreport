@@ -8,6 +8,7 @@ entity JasperreportTemplate {
 	JasperreportTemplateName String ,
 	JasperreportTemplateFile AnyBlob ,
 	correspondentBillDate Instant ,
+	    isUse Boolean,
 	version Integer,
 }
 

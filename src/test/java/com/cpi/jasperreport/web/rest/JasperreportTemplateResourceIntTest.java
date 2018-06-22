@@ -60,6 +60,9 @@ public class JasperreportTemplateResourceIntTest {
     private static final Instant DEFAULT_CORRESPONDENT_BILL_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_CORRESPONDENT_BILL_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
+    private static final Boolean DEFAULT_IS_USE = false;
+    private static final Boolean UPDATED_IS_USE = true;
+
     private static final Integer DEFAULT_VERSION = 1;
     private static final Integer UPDATED_VERSION = 2;
 
@@ -114,6 +117,7 @@ public class JasperreportTemplateResourceIntTest {
             .jasperreportTemplateFile(DEFAULT_JASPERREPORT_TEMPLATE_FILE)
             .jasperreportTemplateFileContentType(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)
             .correspondentBillDate(DEFAULT_CORRESPONDENT_BILL_DATE)
+            .isUse(DEFAULT_IS_USE)
             .version(DEFAULT_VERSION);
         return jasperreportTemplate;
     }
@@ -143,6 +147,7 @@ public class JasperreportTemplateResourceIntTest {
         assertThat(testJasperreportTemplate.getJasperreportTemplateFile()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_FILE);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFileContentType()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE);
         assertThat(testJasperreportTemplate.getCorrespondentBillDate()).isEqualTo(DEFAULT_CORRESPONDENT_BILL_DATE);
+        assertThat(testJasperreportTemplate.isIsUse()).isEqualTo(DEFAULT_IS_USE);
         assertThat(testJasperreportTemplate.getVersion()).isEqualTo(DEFAULT_VERSION);
     }
 
@@ -181,6 +186,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(jsonPath("$.[*].jasperreportTemplateFileContentType").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFile").value(hasItem(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE))))
             .andExpect(jsonPath("$.[*].correspondentBillDate").value(hasItem(DEFAULT_CORRESPONDENT_BILL_DATE.toString())))
+            .andExpect(jsonPath("$.[*].isUse").value(hasItem(DEFAULT_IS_USE.booleanValue())))
             .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)));
     }
 
@@ -199,6 +205,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(jsonPath("$.jasperreportTemplateFileContentType").value(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE))
             .andExpect(jsonPath("$.jasperreportTemplateFile").value(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE)))
             .andExpect(jsonPath("$.correspondentBillDate").value(DEFAULT_CORRESPONDENT_BILL_DATE.toString()))
+            .andExpect(jsonPath("$.isUse").value(DEFAULT_IS_USE.booleanValue()))
             .andExpect(jsonPath("$.version").value(DEFAULT_VERSION));
     }
 
@@ -278,6 +285,45 @@ public class JasperreportTemplateResourceIntTest {
 
         // Get all the jasperreportTemplateList where correspondentBillDate is null
         defaultJasperreportTemplateShouldNotBeFound("correspondentBillDate.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByIsUseIsEqualToSomething() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where isUse equals to DEFAULT_IS_USE
+        defaultJasperreportTemplateShouldBeFound("isUse.equals=" + DEFAULT_IS_USE);
+
+        // Get all the jasperreportTemplateList where isUse equals to UPDATED_IS_USE
+        defaultJasperreportTemplateShouldNotBeFound("isUse.equals=" + UPDATED_IS_USE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByIsUseIsInShouldWork() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where isUse in DEFAULT_IS_USE or UPDATED_IS_USE
+        defaultJasperreportTemplateShouldBeFound("isUse.in=" + DEFAULT_IS_USE + "," + UPDATED_IS_USE);
+
+        // Get all the jasperreportTemplateList where isUse equals to UPDATED_IS_USE
+        defaultJasperreportTemplateShouldNotBeFound("isUse.in=" + UPDATED_IS_USE);
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByIsUseIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where isUse is not null
+        defaultJasperreportTemplateShouldBeFound("isUse.specified=true");
+
+        // Get all the jasperreportTemplateList where isUse is null
+        defaultJasperreportTemplateShouldNotBeFound("isUse.specified=false");
     }
 
     @Test
@@ -376,6 +422,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(jsonPath("$.[*].jasperreportTemplateFileContentType").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFile").value(hasItem(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE))))
             .andExpect(jsonPath("$.[*].correspondentBillDate").value(hasItem(DEFAULT_CORRESPONDENT_BILL_DATE.toString())))
+            .andExpect(jsonPath("$.[*].isUse").value(hasItem(DEFAULT_IS_USE.booleanValue())))
             .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)));
     }
 
@@ -415,6 +462,7 @@ public class JasperreportTemplateResourceIntTest {
             .jasperreportTemplateFile(UPDATED_JASPERREPORT_TEMPLATE_FILE)
             .jasperreportTemplateFileContentType(UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)
             .correspondentBillDate(UPDATED_CORRESPONDENT_BILL_DATE)
+            .isUse(UPDATED_IS_USE)
             .version(UPDATED_VERSION);
         JasperreportTemplateDTO jasperreportTemplateDTO = jasperreportTemplateMapper.toDto(updatedJasperreportTemplate);
 
@@ -431,6 +479,7 @@ public class JasperreportTemplateResourceIntTest {
         assertThat(testJasperreportTemplate.getJasperreportTemplateFile()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_FILE);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFileContentType()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE);
         assertThat(testJasperreportTemplate.getCorrespondentBillDate()).isEqualTo(UPDATED_CORRESPONDENT_BILL_DATE);
+        assertThat(testJasperreportTemplate.isIsUse()).isEqualTo(UPDATED_IS_USE);
         assertThat(testJasperreportTemplate.getVersion()).isEqualTo(UPDATED_VERSION);
     }
 

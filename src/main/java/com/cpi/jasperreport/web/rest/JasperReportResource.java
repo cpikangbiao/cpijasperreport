@@ -11,7 +11,7 @@
 package com.cpi.jasperreport.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.cpi.jasperreport.service.JasperReportService;
+import com.cpi.jasperreport.web.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class JasperReportResource {
     private final Logger log = LoggerFactory.getLogger(JasperReportResource.class);
 
     @Autowired
-    private JasperReportService jasperReportService;
+    private JasperReportUtility jasperReportUtility;
 
     @PostMapping("/pdf")
     @Timed
@@ -46,7 +46,7 @@ public class JasperReportResource {
                                              @RequestParam(value = "name", required = true)  Map<String, Object> parameters,
                                              @RequestParam(value = "name", required = true)  JRDataSource dataSource)  {
         log.debug("REST request to process PDF file byte [] ");
-        byte[] body = jasperReportService.exportBatchPDF(jasperFileName, parameters, dataSource);
+        byte[] body = jasperReportUtility.exportBatchPDF(jasperFileName, parameters, dataSource);
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
@@ -56,7 +56,7 @@ public class JasperReportResource {
     public ResponseEntity<byte[]> processPDFNoDataSource(@RequestParam(value = "name", required = true)  String jasperFileName,
                                              @RequestParam(value = "name", required = true)  Map<String, Object> parameters)  {
         log.debug("REST request to process PDF file byte [] ");
-        byte[] body = jasperReportService.exportBatchPDF(jasperFileName, parameters, new JREmptyDataSource());
+        byte[] body = jasperReportUtility.exportBatchPDF(jasperFileName, parameters, new JREmptyDataSource());
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }

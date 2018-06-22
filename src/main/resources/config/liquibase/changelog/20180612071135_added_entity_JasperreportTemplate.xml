@@ -37,6 +37,10 @@
                 <constraints nullable="true" />
             </column>
 
+            <column name="is_use" type="bit">
+                <constraints nullable="true" />
+            </column>
+
             <column name="version" type="integer">
                 <constraints nullable="true" />
             </column>

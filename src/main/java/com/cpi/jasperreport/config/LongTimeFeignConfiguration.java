@@ -10,10 +10,12 @@
  */
 package com.cpi.jasperreport.config;
 
+import feign.Feign;
 import feign.Logger;
 import feign.Request;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,13 +29,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LongTimeFeignConfiguration {
 
-    public static final int CONNECT_TIMEOUT_MILLIS = 5000;
-    public static final int READ_TIMEOUT_MILLIS = 5000;
+    public static final int CONNECT_TIMEOUT_MILLIS = 50000;
+    public static final int READ_TIMEOUT_MILLIS = 50000;
 
     @Bean
-    public Logger.Level feignLogger() {
-        return Logger.Level.FULL;
+    @Scope("prototype")
+    public Feign.Builder feignBuilder() {
+        return Feign.builder();
     }
+
+//    @Bean
+//    public Logger.Level feignLogger() {
+//        return Logger.Level.FULL;
+//    }
 
     @Bean
     public Request.Options options() {

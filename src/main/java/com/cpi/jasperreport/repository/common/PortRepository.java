@@ -35,7 +35,7 @@ public interface PortRepository {
 //    List<Team> findTeams();
 //
     @RequestMapping(value = "/api/test/ports", method = RequestMethod.GET)
-    @HystrixProperty(name = "hystrix.command.default.execution.timeout.enabled", value = "false")
+//    @HystrixProperty(name = "hystrix.command.default.execution.timeout.enabled", value = "false")
     List findPorts();
 
 //    private RestTemplate restTemplate = new RestTemplate();

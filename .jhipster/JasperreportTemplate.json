@@ -23,6 +23,10 @@
             "fieldType": "Instant"
         },
         {
+            "fieldName": "isUse",
+            "fieldType": "Boolean"
+        },
+        {
             "fieldName": "version",
             "fieldType": "Integer"
         }
