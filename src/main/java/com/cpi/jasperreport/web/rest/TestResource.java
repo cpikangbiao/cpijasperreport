@@ -22,10 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,67 +45,78 @@ public class TestResource {
     private final Logger log = LoggerFactory.getLogger(TestResource.class);
 
     @Autowired
-    private JasperReportService jasperReportService;
+    private JasperReportUtility jasperReportUtility;
 
     @Autowired
     private PortRepository portRepository;
 
-    @GetMapping("/pdf")
+    @PostMapping("/pdf")
     @Timed
-    public ResponseEntity<byte[]> processPDF()  {
-        log.debug("REST request to upload excel xls file for parse ");
+    public ResponseEntity<byte[]> processPDF(@RequestParam(value = "filename", required = true)  String jasperFileName,
+                                             @RequestBody Map<String, Object> parameters)  {
+        log.debug("REST request to process PDF file byte [] ");
 
-        Map<String, Object> parameter = new HashMap<String, Object>();
-        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
-        byte[] body = jasperReportService.exportBatchPDF("Test.jasper", parameter, new JREmptyDataSource());
+        JRDataSource dataSource = new JREmptyDataSource();
+        if (parameters.containsKey("datasource")) {
+            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
+        }
 
-        HttpHeaders headers=new HttpHeaders();
-        headers.add("Content-Disposition","attachment;filename=11.pdf");
+        byte[] body = jasperReportUtility.exportBatchPDF(jasperFileName, parameters, dataSource);
 
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+        return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
-    @GetMapping("/ports")
+    @PostMapping("/addimage")
     @Timed
-    public ResponseEntity<byte[]> processPortsPDF()  {
-        log.debug("REST request to upload excel xls file for parse ");
+    public Map<String, Object> addImageMapParamete(@RequestParam(value = "path", required = true)  String path,
+                                                   @RequestParam(value = "imageFileName", required = true)  String imageFileName,
+                                                   @RequestParam(value = "imageParameterName", required = true)  String imageParameterName)  {
+        log.debug("REST request to process PDF file byte [] ");
 
-        Map<String, Object> parameter = new HashMap<String, Object>();
-//        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
-
-        List<Object> lists = portRepository.findPorts();
-        JRBeanArrayDataSource dataSource =
-            new JRBeanArrayDataSource(lists.toArray());
-
-        byte[] body = jasperReportService.exportBatchPDF("Correspondent.jasper", parameter, dataSource);
-
-
-        HttpHeaders headers=new HttpHeaders();
-        headers.add("Content-Disposition","attachment;filename=11.pdf");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+        return JasperReportUtility.addImageToParameter(path, imageFileName, imageParameterName);
     }
-
-    @GetMapping("/port")
-    @Timed
-    public ResponseEntity<byte[]> test()  {
-        log.debug("REST request to upload excel xls file for parse ");
-
-        Map<String, Object> parameter = new HashMap<String, Object>();
-//        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
-
-        List<Object> lists = portRepository.findPorts();
-        JRBeanArrayDataSource dataSource =
-            new JRBeanArrayDataSource(lists.toArray());
-
-        byte[] body = jasperReportService.exportBatchPDF("Correspondent.jasper", parameter, dataSource);
-
-
-        HttpHeaders headers=new HttpHeaders();
-        headers.add("Content-Disposition","attachment;filename=11.pdf");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
-    }
+//
+//    @GetMapping("/ports")
+//    @Timed
+//    public ResponseEntity<byte[]> processPortsPDF()  {
+//        log.debug("REST request to upload excel xls file for parse ");
+//
+//        Map<String, Object> parameter = new HashMap<String, Object>();
+////        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
+//
+//        List<Object> lists = portRepository.findPorts();
+//        JRBeanArrayDataSource dataSource =
+//            new JRBeanArrayDataSource(lists.toArray());
+//
+//        byte[] body = jasperReportUtility.exportBatchPDF("Correspondent.jasper", parameter, dataSource);
+//
+//
+//        HttpHeaders headers=new HttpHeaders();
+//        headers.add("Content-Disposition","attachment;filename=11.pdf");
+//
+//        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/port")
+//    @Timed
+//    public ResponseEntity<byte[]> test()  {
+//        log.debug("REST request to upload excel xls file for parse ");
+//
+//        Map<String, Object> parameter = new HashMap<String, Object>();
+////        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
+//
+//        List<Object> lists = portRepository.findPorts();
+//        JRBeanArrayDataSource dataSource =
+//            new JRBeanArrayDataSource(lists.toArray());
+//
+//        byte[] body = jasperReportUtility.exportBatchPDF("Correspondent.jasper", parameter, dataSource);
+//
+//
+//        HttpHeaders headers=new HttpHeaders();
+//        headers.add("Content-Disposition","attachment;filename=11.pdf");
+//
+//        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+//    }
 //
 //    @GetMapping("/pdfs")
 //    @Timed

@@ -10,7 +10,10 @@
  */
 package com.cpi.jasperreport.web.utility;
 
+import com.cpi.jasperreport.domain.JasperreportTemplate;
+import com.cpi.jasperreport.domain.JasperreportTemplateType;
 import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
+import com.cpi.jasperreport.repository.JasperreportTemplateTypeRepository;
 import com.cpi.jasperreport.web.rest.JasperreportTemplateResource;
 import com.cpi.jasperreport.web.rest.TestResource;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -54,6 +57,8 @@ public class JasperReportUtility {
 
     private JasperreportTemplateRepository jasperreportTemplateRepository;
 
+    private JasperreportTemplateTypeRepository jasperreportTemplateTypeRepository;
+
     public JasperReportUtility() {
     }
 
@@ -61,6 +66,7 @@ public class JasperReportUtility {
     public void init() {
         jasperReportUtility = this;
         jasperReportUtility.jasperreportTemplateRepository = this.jasperreportTemplateRepository;
+        jasperReportUtility.jasperreportTemplateTypeRepository = this.jasperreportTemplateTypeRepository;
     }
 
     public static final Map<String, Object> addImageToParameter(String imageFilePath, String imageFileName, String parameterName) {
@@ -92,6 +98,20 @@ public class JasperReportUtility {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+        return body;
+    }
+
+    public final byte[] exportBatchPDF(Long id, Map<String, Object> parameter, JRDataSource dataSource) {
+        byte[] body = null;
+        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
+        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(jasperreportTemplate.getJasperreportTemplateFile()) ;
+            JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parameter, dataSource);
+            body = exportSimplePDF(jasperPrint);
         } catch (JRException e) {
             e.printStackTrace();
         }
