@@ -55,8 +55,10 @@ public class JasperReportUtility {
 
     private static final Logger log = LoggerFactory.getLogger(JasperReportUtility.class);
 
+    @Autowired
     private JasperreportTemplateRepository jasperreportTemplateRepository;
 
+    @Autowired
     private JasperreportTemplateTypeRepository jasperreportTemplateTypeRepository;
 
     public JasperReportUtility() {
@@ -106,8 +108,8 @@ public class JasperReportUtility {
 
     public final byte[] exportBatchPDF(Long id, Map<String, Object> parameter, JRDataSource dataSource) {
         byte[] body = null;
-        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
-        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
+//        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
+        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(id);//.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(jasperreportTemplate.getJasperreportTemplateFile()) ;
             JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parameter, dataSource);
