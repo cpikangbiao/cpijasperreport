@@ -111,10 +111,23 @@ public class JasperReportUtility {
 //        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
         JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(id);//.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(jasperreportTemplate.getJasperreportTemplateFile()) ;
+            InputStream inputStream = null;
+
+            if (jasperreportTemplate.getJasperreportTemplateFileName() != null) {
+                StringBuilder path = new StringBuilder().append("reports/").append(jasperreportTemplate.getJasperreportTemplateFileName());
+                ClassPathResource classPathResource = new ClassPathResource(path.toString());
+                inputStream = new FileInputStream(classPathResource.getFile());
+            } else {
+                inputStream = new ByteArrayInputStream(jasperreportTemplate.getJasperreportTemplateFile()) ;
+            }
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parameter, dataSource);
             body = exportSimplePDF(jasperPrint);
         } catch (JRException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return body;

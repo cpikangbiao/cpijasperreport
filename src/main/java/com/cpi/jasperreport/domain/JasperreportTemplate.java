@@ -26,6 +26,9 @@ public class JasperreportTemplate implements Serializable {
     @Column(name = "jasperreport_template_name")
     private String jasperreportTemplateName;
 
+    @Column(name = "jasperreport_template_file_name")
+    private String jasperreportTemplateFileName;
+
     @Lob
     @Column(name = "jasperreport_template_file")
     private byte[] jasperreportTemplateFile;
@@ -65,6 +68,19 @@ public class JasperreportTemplate implements Serializable {
 
     public void setJasperreportTemplateName(String jasperreportTemplateName) {
         this.jasperreportTemplateName = jasperreportTemplateName;
+    }
+
+    public String getJasperreportTemplateFileName() {
+        return jasperreportTemplateFileName;
+    }
+
+    public JasperreportTemplate jasperreportTemplateFileName(String jasperreportTemplateFileName) {
+        this.jasperreportTemplateFileName = jasperreportTemplateFileName;
+        return this;
+    }
+
+    public void setJasperreportTemplateFileName(String jasperreportTemplateFileName) {
+        this.jasperreportTemplateFileName = jasperreportTemplateFileName;
     }
 
     public byte[] getJasperreportTemplateFile() {
@@ -171,6 +187,7 @@ public class JasperreportTemplate implements Serializable {
         return "JasperreportTemplate{" +
             "id=" + getId() +
             ", jasperreportTemplateName='" + getJasperreportTemplateName() + "'" +
+            ", jasperreportTemplateFileName='" + getJasperreportTemplateFileName() + "'" +
             ", jasperreportTemplateFile='" + getJasperreportTemplateFile() + "'" +
             ", jasperreportTemplateFileContentType='" + getJasperreportTemplateFileContentType() + "'" +
             ", correspondentBillDate='" + getCorrespondentBillDate() + "'" +

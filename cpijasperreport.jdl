@@ -6,6 +6,7 @@ entity JasperreportTemplateType {
 
 entity JasperreportTemplate {
 	JasperreportTemplateName String ,
+	JasperreportTemplateFileName String ,
 	JasperreportTemplateFile AnyBlob ,
 	correspondentBillDate Instant ,
 	    isUse Boolean,

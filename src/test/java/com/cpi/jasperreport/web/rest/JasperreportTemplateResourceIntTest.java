@@ -52,6 +52,9 @@ public class JasperreportTemplateResourceIntTest {
     private static final String DEFAULT_JASPERREPORT_TEMPLATE_NAME = "AAAAAAAAAA";
     private static final String UPDATED_JASPERREPORT_TEMPLATE_NAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME = "BBBBBBBBBB";
+
     private static final byte[] DEFAULT_JASPERREPORT_TEMPLATE_FILE = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_JASPERREPORT_TEMPLATE_FILE = TestUtil.createByteArray(2, "1");
     private static final String DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE = "image/jpg";
@@ -114,6 +117,7 @@ public class JasperreportTemplateResourceIntTest {
     public static JasperreportTemplate createEntity(EntityManager em) {
         JasperreportTemplate jasperreportTemplate = new JasperreportTemplate()
             .jasperreportTemplateName(DEFAULT_JASPERREPORT_TEMPLATE_NAME)
+            .jasperreportTemplateFileName(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME)
             .jasperreportTemplateFile(DEFAULT_JASPERREPORT_TEMPLATE_FILE)
             .jasperreportTemplateFileContentType(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)
             .correspondentBillDate(DEFAULT_CORRESPONDENT_BILL_DATE)
@@ -144,6 +148,7 @@ public class JasperreportTemplateResourceIntTest {
         assertThat(jasperreportTemplateList).hasSize(databaseSizeBeforeCreate + 1);
         JasperreportTemplate testJasperreportTemplate = jasperreportTemplateList.get(jasperreportTemplateList.size() - 1);
         assertThat(testJasperreportTemplate.getJasperreportTemplateName()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_NAME);
+        assertThat(testJasperreportTemplate.getJasperreportTemplateFileName()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFile()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_FILE);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFileContentType()).isEqualTo(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE);
         assertThat(testJasperreportTemplate.getCorrespondentBillDate()).isEqualTo(DEFAULT_CORRESPONDENT_BILL_DATE);
@@ -183,6 +188,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(jasperreportTemplate.getId().intValue())))
             .andExpect(jsonPath("$.[*].jasperreportTemplateName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_NAME.toString())))
+            .andExpect(jsonPath("$.[*].jasperreportTemplateFileName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME.toString())))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFileContentType").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFile").value(hasItem(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE))))
             .andExpect(jsonPath("$.[*].correspondentBillDate").value(hasItem(DEFAULT_CORRESPONDENT_BILL_DATE.toString())))
@@ -202,6 +208,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(jasperreportTemplate.getId().intValue()))
             .andExpect(jsonPath("$.jasperreportTemplateName").value(DEFAULT_JASPERREPORT_TEMPLATE_NAME.toString()))
+            .andExpect(jsonPath("$.jasperreportTemplateFileName").value(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME.toString()))
             .andExpect(jsonPath("$.jasperreportTemplateFileContentType").value(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE))
             .andExpect(jsonPath("$.jasperreportTemplateFile").value(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE)))
             .andExpect(jsonPath("$.correspondentBillDate").value(DEFAULT_CORRESPONDENT_BILL_DATE.toString()))
@@ -246,6 +253,45 @@ public class JasperreportTemplateResourceIntTest {
 
         // Get all the jasperreportTemplateList where jasperreportTemplateName is null
         defaultJasperreportTemplateShouldNotBeFound("jasperreportTemplateName.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByJasperreportTemplateFileNameIsEqualToSomething() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName equals to DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME
+        defaultJasperreportTemplateShouldBeFound("jasperreportTemplateFileName.equals=" + DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME);
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName equals to UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME
+        defaultJasperreportTemplateShouldNotBeFound("jasperreportTemplateFileName.equals=" + UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByJasperreportTemplateFileNameIsInShouldWork() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName in DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME or UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME
+        defaultJasperreportTemplateShouldBeFound("jasperreportTemplateFileName.in=" + DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME + "," + UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME);
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName equals to UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME
+        defaultJasperreportTemplateShouldNotBeFound("jasperreportTemplateFileName.in=" + UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME);
+    }
+
+    @Test
+    @Transactional
+    public void getAllJasperreportTemplatesByJasperreportTemplateFileNameIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName is not null
+        defaultJasperreportTemplateShouldBeFound("jasperreportTemplateFileName.specified=true");
+
+        // Get all the jasperreportTemplateList where jasperreportTemplateFileName is null
+        defaultJasperreportTemplateShouldNotBeFound("jasperreportTemplateFileName.specified=false");
     }
 
     @Test
@@ -419,6 +465,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(jasperreportTemplate.getId().intValue())))
             .andExpect(jsonPath("$.[*].jasperreportTemplateName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_NAME.toString())))
+            .andExpect(jsonPath("$.[*].jasperreportTemplateFileName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME.toString())))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFileContentType").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFile").value(hasItem(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE))))
             .andExpect(jsonPath("$.[*].correspondentBillDate").value(hasItem(DEFAULT_CORRESPONDENT_BILL_DATE.toString())))
@@ -459,6 +506,7 @@ public class JasperreportTemplateResourceIntTest {
         em.detach(updatedJasperreportTemplate);
         updatedJasperreportTemplate
             .jasperreportTemplateName(UPDATED_JASPERREPORT_TEMPLATE_NAME)
+            .jasperreportTemplateFileName(UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME)
             .jasperreportTemplateFile(UPDATED_JASPERREPORT_TEMPLATE_FILE)
             .jasperreportTemplateFileContentType(UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)
             .correspondentBillDate(UPDATED_CORRESPONDENT_BILL_DATE)
@@ -476,6 +524,7 @@ public class JasperreportTemplateResourceIntTest {
         assertThat(jasperreportTemplateList).hasSize(databaseSizeBeforeUpdate);
         JasperreportTemplate testJasperreportTemplate = jasperreportTemplateList.get(jasperreportTemplateList.size() - 1);
         assertThat(testJasperreportTemplate.getJasperreportTemplateName()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_NAME);
+        assertThat(testJasperreportTemplate.getJasperreportTemplateFileName()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFile()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_FILE);
         assertThat(testJasperreportTemplate.getJasperreportTemplateFileContentType()).isEqualTo(UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE);
         assertThat(testJasperreportTemplate.getCorrespondentBillDate()).isEqualTo(UPDATED_CORRESPONDENT_BILL_DATE);

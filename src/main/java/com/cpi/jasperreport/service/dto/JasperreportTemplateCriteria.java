@@ -30,6 +30,8 @@ public class JasperreportTemplateCriteria implements Serializable {
 
     private StringFilter jasperreportTemplateName;
 
+    private StringFilter jasperreportTemplateFileName;
+
     private InstantFilter correspondentBillDate;
 
     private BooleanFilter isUse;
@@ -55,6 +57,14 @@ public class JasperreportTemplateCriteria implements Serializable {
 
     public void setJasperreportTemplateName(StringFilter jasperreportTemplateName) {
         this.jasperreportTemplateName = jasperreportTemplateName;
+    }
+
+    public StringFilter getJasperreportTemplateFileName() {
+        return jasperreportTemplateFileName;
+    }
+
+    public void setJasperreportTemplateFileName(StringFilter jasperreportTemplateFileName) {
+        this.jasperreportTemplateFileName = jasperreportTemplateFileName;
     }
 
     public InstantFilter getCorrespondentBillDate() {
@@ -94,6 +104,7 @@ public class JasperreportTemplateCriteria implements Serializable {
         return "JasperreportTemplateCriteria{" +
                 (id != null ? "id=" + id + ", " : "") +
                 (jasperreportTemplateName != null ? "jasperreportTemplateName=" + jasperreportTemplateName + ", " : "") +
+                (jasperreportTemplateFileName != null ? "jasperreportTemplateFileName=" + jasperreportTemplateFileName + ", " : "") +
                 (correspondentBillDate != null ? "correspondentBillDate=" + correspondentBillDate + ", " : "") +
                 (isUse != null ? "isUse=" + isUse + ", " : "") +
                 (version != null ? "version=" + version + ", " : "") +

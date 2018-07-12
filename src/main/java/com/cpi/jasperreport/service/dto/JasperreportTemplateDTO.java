@@ -17,6 +17,8 @@ public class JasperreportTemplateDTO implements Serializable {
 
     private String jasperreportTemplateName;
 
+    private String jasperreportTemplateFileName;
+
     @Lob
     private byte[] jasperreportTemplateFile;
     private String jasperreportTemplateFileContentType;
@@ -45,6 +47,14 @@ public class JasperreportTemplateDTO implements Serializable {
 
     public void setJasperreportTemplateName(String jasperreportTemplateName) {
         this.jasperreportTemplateName = jasperreportTemplateName;
+    }
+
+    public String getJasperreportTemplateFileName() {
+        return jasperreportTemplateFileName;
+    }
+
+    public void setJasperreportTemplateFileName(String jasperreportTemplateFileName) {
+        this.jasperreportTemplateFileName = jasperreportTemplateFileName;
     }
 
     public byte[] getJasperreportTemplateFile() {
@@ -129,6 +139,7 @@ public class JasperreportTemplateDTO implements Serializable {
         return "JasperreportTemplateDTO{" +
             "id=" + getId() +
             ", jasperreportTemplateName='" + getJasperreportTemplateName() + "'" +
+            ", jasperreportTemplateFileName='" + getJasperreportTemplateFileName() + "'" +
             ", jasperreportTemplateFile='" + getJasperreportTemplateFile() + "'" +
             ", correspondentBillDate='" + getCorrespondentBillDate() + "'" +
             ", isUse='" + isIsUse() + "'" +

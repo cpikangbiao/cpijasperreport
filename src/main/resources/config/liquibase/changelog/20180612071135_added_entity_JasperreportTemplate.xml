@@ -26,6 +26,10 @@
                 <constraints nullable="true" />
             </column>
 
+            <column name="jasperreport_template_file_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
             <column name="jasperreport_template_file" type="longblob">
                 <constraints nullable="true" />
             </column>
