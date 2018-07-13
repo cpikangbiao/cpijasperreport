@@ -71,6 +71,12 @@ public class JasperReportUtility {
         jasperReportUtility.jasperreportTemplateTypeRepository = this.jasperreportTemplateTypeRepository;
     }
 
+    public static final Map<String, Object> addCPILogoBlueImage() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.putAll(JasperReportUtility.addImageToParameter("reports", "cpiblue.jpg", "cpiblueImage"));
+        return parameters;
+    }
+
     public static final Map<String, Object> addImageToParameter(String imageFilePath, String imageFileName, String parameterName) {
         log.debug("add Image path:{} image name: {} To Parameter ", imageFilePath, imageFileName);
 
@@ -87,14 +93,20 @@ public class JasperReportUtility {
 
     public final byte[] exportBatchPDF(String jasperFileName, Map<String, Object> parameter, JRDataSource dataSource) {
         byte[] body = null;
+        StringBuilder imagepath = new StringBuilder().append("reports/");
+        ClassPathResource imageclassPathResource = new ClassPathResource(imagepath.toString());
+        parameter.put("reportDir", imageclassPathResource.getPath());
+
+        parameter.put("SUBREPORT_DIR", imageclassPathResource.getPath());
+
         StringBuilder path = new StringBuilder().append("reports/").append(jasperFileName);
         ClassPathResource classPathResource = new ClassPathResource(path.toString());
-//        Map<String, Object> parameters = new HashMap<String, Object>();
-//        parameters.putAll(parameter);
-//        parameter.putAll(JasperReportUtility.addImageToParameter("reports", "cherry.jpg", "cherryImage"));
+        parameter.putAll(JasperReportUtility.addCPILogoBlueImage());
+
+
+
         try {
-            File file = classPathResource.getFile();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(new FileInputStream(file), parameter, dataSource);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(classPathResource.getInputStream(), parameter, dataSource);
             body = exportSimplePDF(jasperPrint);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -108,6 +120,12 @@ public class JasperReportUtility {
 
     public final byte[] exportBatchPDF(Long id, Map<String, Object> parameter, JRDataSource dataSource) {
         byte[] body = null;
+        StringBuilder imagepath = new StringBuilder().append("reports/");
+        ClassPathResource imageclassPathResource = new ClassPathResource(imagepath.toString());
+        parameter.put("imagepath", imageclassPathResource.getPath());
+
+        parameter.put("SUBREPORT_DIR", imageclassPathResource.getPath());
+
 //        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
         JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(id);//.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
         try {
