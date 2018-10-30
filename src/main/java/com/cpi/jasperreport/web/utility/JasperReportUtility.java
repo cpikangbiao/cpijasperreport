@@ -20,6 +20,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -91,7 +92,7 @@ public class JasperReportUtility {
         return parameters;
     }
 
-    public final byte[] exportBatchPDF(String jasperFileName, Map<String, Object> parameter, JRDataSource dataSource) {
+    public final byte[] exportBatchHTML(String jasperFileName, Map<String, Object> parameter, JRDataSource dataSource) {
         byte[] body = null;
         StringBuilder imagepath = new StringBuilder().append("reports/");
         ClassPathResource imageclassPathResource = new ClassPathResource(imagepath.toString());
@@ -103,7 +104,30 @@ public class JasperReportUtility {
         ClassPathResource classPathResource = new ClassPathResource(path.toString());
         parameter.putAll(JasperReportUtility.addCPILogoBlueImage());
 
+        try {
+            JasperPrint jasperPrint = JasperFillManager.fillReport(classPathResource.getInputStream(), parameter, dataSource);
+            body = exportSimpleHTML(jasperPrint);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+        return body;
+    }
 
+    public final byte[] exportBatchPDF(String jasperFileName, Map<String, Object> parameter, JRDataSource dataSource) {
+        byte[] body = null;
+        StringBuilder imagepath = new StringBuilder().append("reports/");
+        ClassPathResource imageclassPathResource = new ClassPathResource(imagepath.toString());
+        parameter.put("reportDir", imageclassPathResource.getPath());
+
+        parameter.put("SUBREPORT_DIR", imageclassPathResource.getPath());
+
+        StringBuilder path = new StringBuilder().append("reports/").append(jasperFileName);
+        ClassPathResource classPathResource = new ClassPathResource(path.toString());
+        parameter.putAll(JasperReportUtility.addCPILogoBlueImage());
 
         try {
             JasperPrint jasperPrint = JasperFillManager.fillReport(classPathResource.getInputStream(), parameter, dataSource);
@@ -162,6 +186,26 @@ public class JasperReportUtility {
             exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(output));
             exporter.setConfiguration(defaultReportConfig());
             exporter.setConfiguration(defaultExportConfig());
+
+            exporter.exportReport();
+
+            body = output.toByteArray();
+
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+
+        return body;
+    }
+
+    public final byte[] exportSimpleHTML(JasperPrint jasperPrint) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        HtmlExporter exporter = new HtmlExporter();
+
+        byte[] body = null;
+
+        try {
+            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
 
             exporter.exportReport();
 
