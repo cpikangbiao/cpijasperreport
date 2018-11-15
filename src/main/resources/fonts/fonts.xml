@@ -65,6 +65,19 @@
         </exportFonts>
     </fontFamily>
 
+    <fontFamily name="Arial">
+        <normal>ARIAL.TTF</normal>
+        <bold>simfang.TTF</bold>
+        <italic>simfang.TTF</italic>
+        <boldItalic>simfang.ttf</boldItalic>
+        <pdfEncoding>Identity-H</pdfEncoding>
+        <pdfEmbedded>true</pdfEmbedded>
+        <exportFonts>
+            <export key="net.sf.jasperreports.html">'仿宋', Arial, Helvetica, sans-serif</export>
+            <export key="net.sf.jasperreports.xhtml">'仿宋', Arial, Helvetica, sans-serif</export>
+        </exportFonts>
+    </fontFamily>
+
     <fontFamily name="宋体">
         <normal>simsun.ttf</normal>
         <bold>simsun.ttf</bold>
