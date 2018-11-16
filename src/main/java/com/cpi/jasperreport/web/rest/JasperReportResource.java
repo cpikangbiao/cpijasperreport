@@ -103,6 +103,21 @@ public class JasperReportResource {
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
+    @PostMapping("/word-withfile")
+    @Timed
+    public ResponseEntity<byte[]> processWord(@RequestParam(value = "filename", required = true)  String jasperFileName,
+                                              @RequestBody Map<String, Object> parameters)  {
+        log.debug("REST request to process HTML file byte [] ");
+
+        JRDataSource dataSource = new JREmptyDataSource();
+        if (parameters.containsKey("datasource")) {
+            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
+        }
+
+        byte[] body = jasperReportUtility.exportBatchWord(jasperFileName, parameters, dataSource);
+
+        return new ResponseEntity<>(body, HttpStatus.OK);
+    }
 
 //    @PostMapping("/pdf-nodatasource")
 //    @Timed

@@ -16,12 +16,10 @@ import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
 import com.cpi.jasperreport.repository.JasperreportTemplateTypeRepository;
 import com.cpi.jasperreport.web.rest.JasperreportTemplateResource;
 import com.cpi.jasperreport.web.rest.TestResource;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.export.*;
 import org.slf4j.Logger;
@@ -139,6 +137,31 @@ public class JasperReportUtility {
         return body;
     }
 
+    public final byte[] exportBatchWord(String jasperFileName, Map<String, Object> parameter, JRDataSource dataSource) {
+        byte[] body = null;
+        StringBuilder imagepath = new StringBuilder().append("reports/");
+        ClassPathResource imageclassPathResource = new ClassPathResource(imagepath.toString());
+        parameter.put("reportDir", imageclassPathResource.getPath());
+
+        parameter.put("SUBREPORT_DIR", imageclassPathResource.getPath());
+
+        StringBuilder path = new StringBuilder().append("reports/").append(jasperFileName);
+        ClassPathResource classPathResource = new ClassPathResource(path.toString());
+        parameter.putAll(JasperReportUtility.addCPILogoBlueImage());
+
+        try {
+            JasperPrint jasperPrint = JasperFillManager.fillReport(classPathResource.getInputStream(), parameter, dataSource);
+            body = exportSimpleWord(jasperPrint);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+        return body;
+    }
+
     public final byte[] exportBatchPDF(Long id, Map<String, Object> parameter, JRDataSource dataSource) {
         byte[] body = null;
         StringBuilder imagepath = new StringBuilder().append("reports/");
@@ -215,6 +238,30 @@ public class JasperReportUtility {
         return body;
     }
 
+
+    public final byte[] exportSimpleWord(JasperPrint jasperPrint) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        JRDocxExporter exporter = new JRDocxExporter ();
+
+        byte[] body = null;
+
+        try {
+            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(output));
+            exporter.setConfiguration(defaultDocxReportConfig());
+            exporter.setConfiguration(defaultDocxExportConfig());
+
+            exporter.exportReport();
+
+            body = output.toByteArray();
+
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+
+        return body;
+    }
+
     public final byte[] exportBatchPDF(List<JasperPrint> jasperPrints) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         JRPdfExporter exporter = new JRPdfExporter();
@@ -251,6 +298,21 @@ public class JasperReportUtility {
         reportConfig.setSizePageToContent(true);
         reportConfig.setForceLineBreakPolicy(false);
         return reportConfig;
+    }
+
+    private SimpleDocxReportConfiguration  defaultDocxReportConfig() {
+        SimpleDocxReportConfiguration  docxReportConfiguration = new SimpleDocxReportConfiguration ();
+//        docxReportConfiguration.setFlexibleRowHeight(true);
+//        docxReportConfiguration.setFramesAsNestedTables();
+        return docxReportConfiguration;
+    }
+
+    private SimpleDocxExporterConfiguration defaultDocxExportConfig() {
+        SimpleDocxExporterConfiguration docxExporterConfiguration = new SimpleDocxExporterConfiguration();
+        docxExporterConfiguration.setMetadataAuthor("CPI - China Shipowners Mutual Assurance Association");
+//        docxExporterConfiguration.setMetadataTitle();
+
+        return docxExporterConfiguration;
     }
 }
 
