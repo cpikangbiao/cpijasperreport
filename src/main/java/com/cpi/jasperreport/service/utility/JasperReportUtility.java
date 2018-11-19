@@ -8,13 +8,11 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package com.cpi.jasperreport.web.utility;
+package com.cpi.jasperreport.service.utility;
 
 import com.cpi.jasperreport.domain.JasperreportTemplate;
-import com.cpi.jasperreport.domain.JasperreportTemplateType;
 import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
 import com.cpi.jasperreport.repository.JasperreportTemplateTypeRepository;
-import com.cpi.jasperreport.web.rest.JasperreportTemplateResource;
 import com.cpi.jasperreport.web.rest.TestResource;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.HtmlExporter;
@@ -27,12 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +42,7 @@ import java.util.Map;
  * @create 2018/5/11
  * @since 1.0.0
  */
-@Component
+@Service
 public class JasperReportUtility {
 
     public static JasperReportUtility jasperReportUtility;

@@ -12,21 +12,18 @@ package com.cpi.jasperreport.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.cpi.jasperreport.repository.common.PortRepository;
-import com.cpi.jasperreport.web.utility.JasperReportUtility;
+import com.cpi.jasperreport.service.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

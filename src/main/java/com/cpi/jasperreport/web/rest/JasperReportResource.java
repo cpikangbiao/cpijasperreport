@@ -11,7 +11,7 @@
 package com.cpi.jasperreport.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.cpi.jasperreport.web.utility.JasperReportUtility;
+import com.cpi.jasperreport.service.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
@@ -23,8 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
