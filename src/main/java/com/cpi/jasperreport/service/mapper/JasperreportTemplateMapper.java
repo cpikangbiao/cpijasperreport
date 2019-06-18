@@ -6,7 +6,7 @@ import com.cpi.jasperreport.service.dto.JasperreportTemplateDTO;
 import org.mapstruct.*;
 
 /**
- * Mapper for the entity JasperreportTemplate and its DTO JasperreportTemplateDTO.
+ * Mapper for the entity {@link JasperreportTemplate} and its DTO {@link JasperreportTemplateDTO}.
  */
 @Mapper(componentModel = "spring", uses = {JasperreportTemplateTypeMapper.class})
 public interface JasperreportTemplateMapper extends EntityMapper<JasperreportTemplateDTO, JasperreportTemplate> {

@@ -10,7 +10,6 @@
  */
 package com.cpi.jasperreport.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.cpi.jasperreport.repository.common.PortRepository;
 import com.cpi.jasperreport.service.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.*;
@@ -48,7 +47,7 @@ public class TestResource {
     private PortRepository portRepository;
 
     @PostMapping("/pdf")
-    @Timed
+
     public ResponseEntity<byte[]> processPDF(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                              @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process PDF file byte [] ");
@@ -64,7 +63,7 @@ public class TestResource {
     }
 
     @PostMapping("/addimage")
-    @Timed
+
     public Map<String, Object> addImageMapParamete(@RequestParam(value = "path", required = true)  String path,
                                                    @RequestParam(value = "imageFileName", required = true)  String imageFileName,
                                                    @RequestParam(value = "imageParameterName", required = true)  String imageParameterName)  {
@@ -74,7 +73,7 @@ public class TestResource {
     }
 //
 //    @GetMapping("/ports")
-//    @Timed
+//
 //    public ResponseEntity<byte[]> processPortsPDF()  {
 //        log.debug("REST request to upload excel xls file for parse ");
 //
@@ -95,7 +94,7 @@ public class TestResource {
 //    }
 //
 //    @GetMapping("/port")
-//    @Timed
+//
 //    public ResponseEntity<byte[]> test()  {
 //        log.debug("REST request to upload excel xls file for parse ");
 //
@@ -116,7 +115,7 @@ public class TestResource {
 //    }
 //
 //    @GetMapping("/pdfs")
-//    @Timed
+//
 //    public ResponseEntity<byte[]> processPDFs()  {
 //        log.debug("REST request to upload excel xls file for parse ");
 //        byte[] body = null;
@@ -157,7 +156,7 @@ public class TestResource {
 
 //    private
 //    @GetMapping("/download-1")
-//    @Timed
+//
 //    public ResponseEntity<byte[]> downloadFile1() throws IOException {
 //        byte[] body = null;
 //
@@ -179,7 +178,7 @@ public class TestResource {
 //    }
 //
 //    @GetMapping("/download-2")
-//    @Timed
+//
 //    public ResponseEntity<ByteArrayResource> downloadFile2() throws IOException {
 //        File file = ResourceUtils.getFile("classpath:test.xls");
 //        Path path = Paths.get(file.getAbsolutePath());

@@ -1,6 +1,5 @@
 package com.cpi.jasperreport.web.rest.ext;
 
-import com.codahale.metrics.annotation.Timed;
 import com.cpi.jasperreport.service.ext.JasperreportTemplateExtService;
 import com.cpi.jasperreport.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ public class JasperreportTemplateExtResource {
     private JasperreportTemplateExtService jasperreportTemplateExtService;
 
     @PutMapping("/jasperreport-templates/{id}/deploy")
-    @Timed
     public ResponseEntity<Void> deployJasperreportTemplate(@PathVariable Long id) {
         log.debug("REST request to deploy Jasperreport Template : {}", id);
         jasperreportTemplateExtService.deployJasperreportTemplate(id);

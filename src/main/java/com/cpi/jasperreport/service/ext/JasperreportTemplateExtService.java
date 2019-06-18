@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -52,7 +53,11 @@ public class JasperreportTemplateExtService extends QueryService<JasperreportTem
         StringBuilder jasperFilePath = new StringBuilder().append("reports/");
         ClassPathResource jasperFilePathResource = new ClassPathResource(jasperFilePath.toString());
 
-        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(jasperreportTemplateId);
+        JasperreportTemplate jasperreportTemplate = null;
+        Optional<JasperreportTemplate> optional = jasperreportTemplateRepository.findById(jasperreportTemplateId);
+        if (optional.isPresent()) {
+            jasperreportTemplate = optional.get();
+        }
 
         if (jasperreportTemplate != null) {
 

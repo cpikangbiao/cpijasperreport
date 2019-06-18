@@ -34,6 +34,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -170,17 +171,21 @@ public class JasperReportUtility {
         parameter.put("SUBREPORT_DIR", imageclassPathResource.getPath());
 
 //        JasperreportTemplateType jasperreportTemplateType = jasperreportTemplateTypeRepository.findOne(id);
-        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(id);//.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
+        Optional<JasperreportTemplate> optional = jasperreportTemplateRepository.findById(id);
+        //.findTopByIsUseTrueAndJasperreportTemplateTypeOrderByVersionDesc(jasperreportTemplateType);
         try {
             InputStream inputStream = null;
 
-            if (jasperreportTemplate.getJasperreportTemplateFileName() != null) {
-                StringBuilder path = new StringBuilder().append("reports/").append(jasperreportTemplate.getJasperreportTemplateFileName());
-                ClassPathResource classPathResource = new ClassPathResource(path.toString());
-                inputStream = new FileInputStream(classPathResource.getFile());
-            } else {
-                inputStream = new ByteArrayInputStream(jasperreportTemplate.getJasperreportTemplateFile()) ;
+            if (optional.isPresent()) {
+                if (optional.get().getJasperreportTemplateFileName() != null) {
+                    StringBuilder path = new StringBuilder().append("reports/").append(optional.get().getJasperreportTemplateFileName());
+                    ClassPathResource classPathResource = new ClassPathResource(path.toString());
+                    inputStream = new FileInputStream(classPathResource.getFile());
+                } else {
+                    inputStream = new ByteArrayInputStream(optional.get().getJasperreportTemplateFile()) ;
+                }
             }
+
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, parameter, dataSource);
             body = exportSimplePDF(jasperPrint);

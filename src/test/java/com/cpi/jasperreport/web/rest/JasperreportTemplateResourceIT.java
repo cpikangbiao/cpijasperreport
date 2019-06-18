@@ -1,9 +1,7 @@
 package com.cpi.jasperreport.web.rest;
 
 import com.cpi.jasperreport.CpijasperreportApp;
-
 import com.cpi.jasperreport.config.SecurityBeanOverrideConfiguration;
-
 import com.cpi.jasperreport.domain.JasperreportTemplate;
 import com.cpi.jasperreport.domain.JasperreportTemplateType;
 import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
@@ -14,20 +12,19 @@ import com.cpi.jasperreport.web.rest.errors.ExceptionTranslator;
 import com.cpi.jasperreport.service.dto.JasperreportTemplateCriteria;
 import com.cpi.jasperreport.service.JasperreportTemplateQueryService;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
+import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
@@ -41,13 +38,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Test class for the JasperreportTemplateResource REST controller.
- *
- * @see JasperreportTemplateResource
+ * Integration tests for the {@Link JasperreportTemplateResource} REST controller.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {CpijasperreportApp.class, SecurityBeanOverrideConfiguration.class})
-public class JasperreportTemplateResourceIntTest {
+@SpringBootTest(classes = {SecurityBeanOverrideConfiguration.class, CpijasperreportApp.class})
+public class JasperreportTemplateResourceIT {
 
     private static final String DEFAULT_JASPERREPORT_TEMPLATE_NAME = "AAAAAAAAAA";
     private static final String UPDATED_JASPERREPORT_TEMPLATE_NAME = "BBBBBBBBBB";
@@ -56,7 +50,7 @@ public class JasperreportTemplateResourceIntTest {
     private static final String UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME = "BBBBBBBBBB";
 
     private static final byte[] DEFAULT_JASPERREPORT_TEMPLATE_FILE = TestUtil.createByteArray(1, "0");
-    private static final byte[] UPDATED_JASPERREPORT_TEMPLATE_FILE = TestUtil.createByteArray(2, "1");
+    private static final byte[] UPDATED_JASPERREPORT_TEMPLATE_FILE = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE = "image/png";
 
@@ -93,11 +87,14 @@ public class JasperreportTemplateResourceIntTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    private Validator validator;
+
     private MockMvc restJasperreportTemplateMockMvc;
 
     private JasperreportTemplate jasperreportTemplate;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final JasperreportTemplateResource jasperreportTemplateResource = new JasperreportTemplateResource(jasperreportTemplateService, jasperreportTemplateQueryService);
@@ -105,7 +102,8 @@ public class JasperreportTemplateResourceIntTest {
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
     }
 
     /**
@@ -125,8 +123,25 @@ public class JasperreportTemplateResourceIntTest {
             .version(DEFAULT_VERSION);
         return jasperreportTemplate;
     }
+    /**
+     * Create an updated entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public static JasperreportTemplate createUpdatedEntity(EntityManager em) {
+        JasperreportTemplate jasperreportTemplate = new JasperreportTemplate()
+            .jasperreportTemplateName(UPDATED_JASPERREPORT_TEMPLATE_NAME)
+            .jasperreportTemplateFileName(UPDATED_JASPERREPORT_TEMPLATE_FILE_NAME)
+            .jasperreportTemplateFile(UPDATED_JASPERREPORT_TEMPLATE_FILE)
+            .jasperreportTemplateFileContentType(UPDATED_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)
+            .correspondentBillDate(UPDATED_CORRESPONDENT_BILL_DATE)
+            .isUse(UPDATED_IS_USE)
+            .version(UPDATED_VERSION);
+        return jasperreportTemplate;
+    }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         jasperreportTemplate = createEntity(em);
     }
@@ -176,6 +191,7 @@ public class JasperreportTemplateResourceIntTest {
         assertThat(jasperreportTemplateList).hasSize(databaseSizeBeforeCreate);
     }
 
+
     @Test
     @Transactional
     public void getAllJasperreportTemplates() throws Exception {
@@ -195,7 +211,7 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(jsonPath("$.[*].isUse").value(hasItem(DEFAULT_IS_USE.booleanValue())))
             .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)));
     }
-
+    
     @Test
     @Transactional
     public void getJasperreportTemplate() throws Exception {
@@ -442,7 +458,7 @@ public class JasperreportTemplateResourceIntTest {
     @Transactional
     public void getAllJasperreportTemplatesByJasperreportTemplateTypeIsEqualToSomething() throws Exception {
         // Initialize the database
-        JasperreportTemplateType jasperreportTemplateType = JasperreportTemplateTypeResourceIntTest.createEntity(em);
+        JasperreportTemplateType jasperreportTemplateType = JasperreportTemplateTypeResourceIT.createEntity(em);
         em.persist(jasperreportTemplateType);
         em.flush();
         jasperreportTemplate.setJasperreportTemplateType(jasperreportTemplateType);
@@ -457,24 +473,30 @@ public class JasperreportTemplateResourceIntTest {
     }
 
     /**
-     * Executes the search, and checks that the default entity is returned
+     * Executes the search, and checks that the default entity is returned.
      */
     private void defaultJasperreportTemplateShouldBeFound(String filter) throws Exception {
         restJasperreportTemplateMockMvc.perform(get("/api/jasperreport-templates?sort=id,desc&" + filter))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(jasperreportTemplate.getId().intValue())))
-            .andExpect(jsonPath("$.[*].jasperreportTemplateName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_NAME.toString())))
-            .andExpect(jsonPath("$.[*].jasperreportTemplateFileName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME.toString())))
+            .andExpect(jsonPath("$.[*].jasperreportTemplateName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_NAME)))
+            .andExpect(jsonPath("$.[*].jasperreportTemplateFileName").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_NAME)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFileContentType").value(hasItem(DEFAULT_JASPERREPORT_TEMPLATE_FILE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].jasperreportTemplateFile").value(hasItem(Base64Utils.encodeToString(DEFAULT_JASPERREPORT_TEMPLATE_FILE))))
             .andExpect(jsonPath("$.[*].correspondentBillDate").value(hasItem(DEFAULT_CORRESPONDENT_BILL_DATE.toString())))
             .andExpect(jsonPath("$.[*].isUse").value(hasItem(DEFAULT_IS_USE.booleanValue())))
             .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)));
+
+        // Check, that the count call also returns 1
+        restJasperreportTemplateMockMvc.perform(get("/api/jasperreport-templates/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("1"));
     }
 
     /**
-     * Executes the search, and checks that the default entity is not returned
+     * Executes the search, and checks that the default entity is not returned.
      */
     private void defaultJasperreportTemplateShouldNotBeFound(String filter) throws Exception {
         restJasperreportTemplateMockMvc.perform(get("/api/jasperreport-templates?sort=id,desc&" + filter))
@@ -482,6 +504,12 @@ public class JasperreportTemplateResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
+
+        // Check, that the count call also returns 0
+        restJasperreportTemplateMockMvc.perform(get("/api/jasperreport-templates/count?sort=id,desc&" + filter))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string("0"));
     }
 
 
@@ -498,10 +526,11 @@ public class JasperreportTemplateResourceIntTest {
     public void updateJasperreportTemplate() throws Exception {
         // Initialize the database
         jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
         int databaseSizeBeforeUpdate = jasperreportTemplateRepository.findAll().size();
 
         // Update the jasperreportTemplate
-        JasperreportTemplate updatedJasperreportTemplate = jasperreportTemplateRepository.findOne(jasperreportTemplate.getId());
+        JasperreportTemplate updatedJasperreportTemplate = jasperreportTemplateRepository.findById(jasperreportTemplate.getId()).get();
         // Disconnect from session so that the updates on updatedJasperreportTemplate are not directly saved in db
         em.detach(updatedJasperreportTemplate);
         updatedJasperreportTemplate
@@ -540,15 +569,15 @@ public class JasperreportTemplateResourceIntTest {
         // Create the JasperreportTemplate
         JasperreportTemplateDTO jasperreportTemplateDTO = jasperreportTemplateMapper.toDto(jasperreportTemplate);
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJasperreportTemplateMockMvc.perform(put("/api/jasperreport-templates")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(jasperreportTemplateDTO)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the JasperreportTemplate in the database
         List<JasperreportTemplate> jasperreportTemplateList = jasperreportTemplateRepository.findAll();
-        assertThat(jasperreportTemplateList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(jasperreportTemplateList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test
@@ -556,12 +585,13 @@ public class JasperreportTemplateResourceIntTest {
     public void deleteJasperreportTemplate() throws Exception {
         // Initialize the database
         jasperreportTemplateRepository.saveAndFlush(jasperreportTemplate);
+
         int databaseSizeBeforeDelete = jasperreportTemplateRepository.findAll().size();
 
-        // Get the jasperreportTemplate
+        // Delete the jasperreportTemplate
         restJasperreportTemplateMockMvc.perform(delete("/api/jasperreport-templates/{id}", jasperreportTemplate.getId())
             .accept(TestUtil.APPLICATION_JSON_UTF8))
-            .andExpect(status().isOk());
+            .andExpect(status().isNoContent());
 
         // Validate the database is empty
         List<JasperreportTemplate> jasperreportTemplateList = jasperreportTemplateRepository.findAll();

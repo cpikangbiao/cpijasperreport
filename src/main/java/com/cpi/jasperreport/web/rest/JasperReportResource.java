@@ -10,7 +10,6 @@
  */
 package com.cpi.jasperreport.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.cpi.jasperreport.service.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -47,7 +46,7 @@ public class JasperReportResource {
     private JasperReportUtility jasperReportUtility;
 
     @PostMapping("/pdf-withfile")
-    @Timed
+    
     public ResponseEntity<byte[]> processPDF(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                              @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process PDF file byte [] jasperFileName： {} parameters ：{} ", jasperFileName, parameters);
@@ -58,18 +57,18 @@ public class JasperReportResource {
     }
 
     @PostMapping("/pdf-withid")
-    @Timed
+    
     public ResponseEntity<byte[]> processPDF(@RequestParam(value = "typeid", required = true)  Integer typeid,
                                              @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process PDF file byte [] typeid： {} parameters ：{} ", typeid, parameters);
 
-        byte[] body = jasperReportUtility.exportBatchPDF(new Long(typeid), parameters, getJRDataSource(parameters));
+        byte[] body = jasperReportUtility.exportBatchPDF(Long.valueOf(typeid), parameters, getJRDataSource(parameters));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
 
     @PostMapping("/addimage")
-    @Timed
+    
     public Map<String, Object> addImageMapParamete(@RequestParam(value = "path", required = true)  String path,
                                              @RequestParam(value = "imageFileName", required = true)  String imageFileName,
                                              @RequestParam(value = "imageParameterName", required = true)  String imageParameterName)  {
@@ -80,7 +79,7 @@ public class JasperReportResource {
 
 
     @PostMapping("/html-withfile")
-    @Timed
+    
     public ResponseEntity<byte[]> processHTML(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                              @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process HTML file byte [] ");
@@ -91,7 +90,7 @@ public class JasperReportResource {
     }
 
     @PostMapping("/word-withfile")
-    @Timed
+    
     public ResponseEntity<byte[]> processWord(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                               @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process HTML file byte [] jasperFileName： {} parameters ：{} ", jasperFileName, parameters);
@@ -102,7 +101,7 @@ public class JasperReportResource {
     }
 
 //    @PostMapping("/pdf-nodatasource")
-//    @Timed
+//    
 //    public ResponseEntity<byte[]> processPDFNoDataSource(@RequestParam(value = "filename", required = true)  String jasperFileName,
 //                                             @RequestParam(value = "name", required = true)  Map<String, Object> parameters)  {
 //        log.debug("REST request to process PDF file byte [] ");

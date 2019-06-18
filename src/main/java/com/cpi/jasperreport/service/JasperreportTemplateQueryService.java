@@ -1,13 +1,14 @@
 package com.cpi.jasperreport.service;
 
-
 import java.util.List;
+
+import javax.persistence.criteria.JoinType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +18,12 @@ import com.cpi.jasperreport.domain.JasperreportTemplate;
 import com.cpi.jasperreport.domain.*; // for static metamodels
 import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
 import com.cpi.jasperreport.service.dto.JasperreportTemplateCriteria;
-
 import com.cpi.jasperreport.service.dto.JasperreportTemplateDTO;
 import com.cpi.jasperreport.service.mapper.JasperreportTemplateMapper;
 
 /**
- * Service for executing complex queries for JasperreportTemplate entities in the database.
- * The main input is a {@link JasperreportTemplateCriteria} which get's converted to {@link Specifications},
+ * Service for executing complex queries for {@link JasperreportTemplate} entities in the database.
+ * The main input is a {@link JasperreportTemplateCriteria} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
  * It returns a {@link List} of {@link JasperreportTemplateDTO} or a {@link Page} of {@link JasperreportTemplateDTO} which fulfills the criteria.
  */
@@ -32,7 +32,6 @@ import com.cpi.jasperreport.service.mapper.JasperreportTemplateMapper;
 public class JasperreportTemplateQueryService extends QueryService<JasperreportTemplate> {
 
     private final Logger log = LoggerFactory.getLogger(JasperreportTemplateQueryService.class);
-
 
     private final JasperreportTemplateRepository jasperreportTemplateRepository;
 
@@ -44,19 +43,19 @@ public class JasperreportTemplateQueryService extends QueryService<JasperreportT
     }
 
     /**
-     * Return a {@link List} of {@link JasperreportTemplateDTO} which matches the criteria from the database
+     * Return a {@link List} of {@link JasperreportTemplateDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
     public List<JasperreportTemplateDTO> findByCriteria(JasperreportTemplateCriteria criteria) {
         log.debug("find by criteria : {}", criteria);
-        final Specifications<JasperreportTemplate> specification = createSpecification(criteria);
+        final Specification<JasperreportTemplate> specification = createSpecification(criteria);
         return jasperreportTemplateMapper.toDto(jasperreportTemplateRepository.findAll(specification));
     }
 
     /**
-     * Return a {@link Page} of {@link JasperreportTemplateDTO} which matches the criteria from the database
+     * Return a {@link Page} of {@link JasperreportTemplateDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
      * @param page The page, which should be returned.
      * @return the matching entities.
@@ -64,16 +63,28 @@ public class JasperreportTemplateQueryService extends QueryService<JasperreportT
     @Transactional(readOnly = true)
     public Page<JasperreportTemplateDTO> findByCriteria(JasperreportTemplateCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
-        final Specifications<JasperreportTemplate> specification = createSpecification(criteria);
-        final Page<JasperreportTemplate> result = jasperreportTemplateRepository.findAll(specification, page);
-        return result.map(jasperreportTemplateMapper::toDto);
+        final Specification<JasperreportTemplate> specification = createSpecification(criteria);
+        return jasperreportTemplateRepository.findAll(specification, page)
+            .map(jasperreportTemplateMapper::toDto);
     }
 
     /**
-     * Function to convert JasperreportTemplateCriteria to a {@link Specifications}
+     * Return the number of matching entities in the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @return the number of matching entities.
      */
-    private Specifications<JasperreportTemplate> createSpecification(JasperreportTemplateCriteria criteria) {
-        Specifications<JasperreportTemplate> specification = Specifications.where(null);
+    @Transactional(readOnly = true)
+    public long countByCriteria(JasperreportTemplateCriteria criteria) {
+        log.debug("count by criteria : {}", criteria);
+        final Specification<JasperreportTemplate> specification = createSpecification(criteria);
+        return jasperreportTemplateRepository.count(specification);
+    }
+
+    /**
+     * Function to convert JasperreportTemplateCriteria to a {@link Specification}.
+     */
+    private Specification<JasperreportTemplate> createSpecification(JasperreportTemplateCriteria criteria) {
+        Specification<JasperreportTemplate> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getId() != null) {
                 specification = specification.and(buildSpecification(criteria.getId(), JasperreportTemplate_.id));
@@ -94,10 +105,10 @@ public class JasperreportTemplateQueryService extends QueryService<JasperreportT
                 specification = specification.and(buildRangeSpecification(criteria.getVersion(), JasperreportTemplate_.version));
             }
             if (criteria.getJasperreportTemplateTypeId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getJasperreportTemplateTypeId(), JasperreportTemplate_.jasperreportTemplateType, JasperreportTemplateType_.id));
+                specification = specification.and(buildSpecification(criteria.getJasperreportTemplateTypeId(),
+                    root -> root.join(JasperreportTemplate_.jasperreportTemplateType, JoinType.LEFT).get(JasperreportTemplateType_.id)));
             }
         }
         return specification;
     }
-
 }

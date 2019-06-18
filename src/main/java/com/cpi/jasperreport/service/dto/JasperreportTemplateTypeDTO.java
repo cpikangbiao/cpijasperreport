@@ -1,12 +1,10 @@
 package com.cpi.jasperreport.service.dto;
-
-
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for the JasperreportTemplateType entity.
+ * A DTO for the {@link com.cpi.jasperreport.domain.JasperreportTemplateType} entity.
  */
 public class JasperreportTemplateTypeDTO implements Serializable {
 
@@ -17,6 +15,7 @@ public class JasperreportTemplateTypeDTO implements Serializable {
 
     @NotNull
     private Integer sortNum;
+
 
     public Long getId() {
         return id;
@@ -52,7 +51,7 @@ public class JasperreportTemplateTypeDTO implements Serializable {
         }
 
         JasperreportTemplateTypeDTO jasperreportTemplateTypeDTO = (JasperreportTemplateTypeDTO) o;
-        if(jasperreportTemplateTypeDTO.getId() == null || getId() == null) {
+        if (jasperreportTemplateTypeDTO.getId() == null || getId() == null) {
             return false;
         }
         return Objects.equals(getId(), jasperreportTemplateTypeDTO.getId());
