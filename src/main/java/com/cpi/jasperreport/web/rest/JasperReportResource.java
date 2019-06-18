@@ -14,7 +14,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.cpi.jasperreport.service.utility.JasperReportUtility;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
+import net.sf.jasperreports.engine.data.JsonDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,14 +50,9 @@ public class JasperReportResource {
     @Timed
     public ResponseEntity<byte[]> processPDF(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                              @RequestBody Map<String, Object> parameters)  {
-        log.debug("REST request to process PDF file byte [] ");
+        log.debug("REST request to process PDF file byte [] jasperFileName： {} parameters ：{} ", jasperFileName, parameters);
 
-        JRDataSource dataSource = new JREmptyDataSource();
-        if (parameters.containsKey("datasource")) {
-            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
-        }
-
-        byte[] body = jasperReportUtility.exportBatchPDF(jasperFileName, parameters, dataSource);
+        byte[] body = jasperReportUtility.exportBatchPDF(jasperFileName, parameters, getJRDataSource(parameters));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
@@ -62,14 +61,9 @@ public class JasperReportResource {
     @Timed
     public ResponseEntity<byte[]> processPDF(@RequestParam(value = "typeid", required = true)  Integer typeid,
                                              @RequestBody Map<String, Object> parameters)  {
-        log.debug("REST request to process PDF file byte [] ");
+        log.debug("REST request to process PDF file byte [] typeid： {} parameters ：{} ", typeid, parameters);
 
-        JRDataSource dataSource = new JREmptyDataSource();
-        if (parameters.containsKey("datasource")) {
-            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
-        }
-        Long tempid = new Long(typeid);
-        byte[] body = jasperReportUtility.exportBatchPDF(tempid, parameters, dataSource);
+        byte[] body = jasperReportUtility.exportBatchPDF(new Long(typeid), parameters, getJRDataSource(parameters));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
@@ -91,12 +85,7 @@ public class JasperReportResource {
                                              @RequestBody Map<String, Object> parameters)  {
         log.debug("REST request to process HTML file byte [] ");
 
-        JRDataSource dataSource = new JREmptyDataSource();
-        if (parameters.containsKey("datasource")) {
-            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
-        }
-
-        byte[] body = jasperReportUtility.exportBatchHTML(jasperFileName, parameters, dataSource);
+        byte[] body = jasperReportUtility.exportBatchHTML(jasperFileName, parameters, getJRDataSource(parameters));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
@@ -105,14 +94,9 @@ public class JasperReportResource {
     @Timed
     public ResponseEntity<byte[]> processWord(@RequestParam(value = "filename", required = true)  String jasperFileName,
                                               @RequestBody Map<String, Object> parameters)  {
-        log.debug("REST request to process HTML file byte [] ");
+        log.debug("REST request to process HTML file byte [] jasperFileName： {} parameters ：{} ", jasperFileName, parameters);
 
-        JRDataSource dataSource = new JREmptyDataSource();
-        if (parameters.containsKey("datasource")) {
-            dataSource = new JRBeanArrayDataSource(((ArrayList) parameters.get("datasource")).toArray()) ;
-        }
-
-        byte[] body = jasperReportUtility.exportBatchWord(jasperFileName, parameters, dataSource);
+        byte[] body = jasperReportUtility.exportBatchWord(jasperFileName, parameters, getJRDataSource(parameters));
 
         return new ResponseEntity<>(body, HttpStatus.OK);
     }
@@ -126,4 +110,27 @@ public class JasperReportResource {
 //
 //        return new ResponseEntity<>(body, HttpStatus.OK);
 //    }
+
+    private JRDataSource getJRDataSource(Map<String, Object> parameters) {
+        JRDataSource dataSource = new JREmptyDataSource();
+
+        if (parameters.containsKey("datasource")) {
+            try {
+                List data = (ArrayList) parameters.get("datasource");
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data.toString().getBytes());
+                dataSource = new JsonDataSource(byteArrayInputStream) ;
+            } catch (JRException e) {
+                e.printStackTrace();
+            }
+        }
+//        if (parameters.containsKey("JRDataSource")) {
+//            dataSource = (JRBeanArrayDataSource) parameters.get("JRDataSource") ;
+//        }
+//
+//        if (parameters.containsKey("JsonDataSource")) {
+//            dataSource = (JsonDataSource) parameters.get("JsonDataSource") ;
+//        }
+
+        return dataSource;
+    }
 }

@@ -14,6 +14,7 @@ import com.cpi.jasperreport.domain.JasperreportTemplate;
 import com.cpi.jasperreport.repository.JasperreportTemplateRepository;
 import com.cpi.jasperreport.repository.JasperreportTemplateTypeRepository;
 import com.cpi.jasperreport.web.rest.TestResource;
+import com.itextpdf.text.pdf.PdfWriter;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
@@ -286,6 +287,13 @@ public class JasperReportUtility {
     private SimplePdfExporterConfiguration defaultExportConfig() {
         SimplePdfExporterConfiguration exportConfig = new SimplePdfExporterConfiguration();
         exportConfig.setMetadataAuthor("CPI - China Shipowners Mutual Assurance Association");
+
+//        exportConfig.setEncrypted(true);
+//        exportConfig.set128BitKey(true);
+//        exportConfig.setUserPassword("jasper");
+//        exportConfig.setOwnerPassword("reports");
+//        exportConfig.setPermissions(PdfWriter.ALLOW_COPY | PdfWriter.ALLOW_PRINTING);
+
         exportConfig.setEncrypted(true);
         exportConfig.setAllowedPermissionsHint("PRINTING");
         return exportConfig;
@@ -311,6 +319,24 @@ public class JasperReportUtility {
 //        docxExporterConfiguration.setMetadataTitle();
 
         return docxExporterConfiguration;
+    }
+
+    private SimpleXlsReportConfiguration    defaultXlsReportConfig() {
+        SimpleXlsReportConfiguration   xlsReportConfiguration = new SimpleXlsReportConfiguration  ();
+        xlsReportConfiguration.setOnePagePerSheet(true);
+        xlsReportConfiguration.setRemoveEmptySpaceBetweenRows(false);
+        xlsReportConfiguration.setDetectCellType(true);
+        xlsReportConfiguration.setWhitePageBackground(false);
+
+        return xlsReportConfiguration;
+    }
+
+    private SimpleXlsExporterConfiguration  defaultXlsExportConfig() {
+        SimpleXlsExporterConfiguration xlsExporterConfiguration = new SimpleXlsExporterConfiguration();
+        xlsExporterConfiguration.setMetadataAuthor("CPI - China Shipowners Mutual Assurance Association");
+
+
+        return xlsExporterConfiguration;
     }
 }
 
