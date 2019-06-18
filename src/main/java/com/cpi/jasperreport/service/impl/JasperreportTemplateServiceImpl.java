@@ -7,14 +7,16 @@ import com.cpi.jasperreport.service.dto.JasperreportTemplateDTO;
 import com.cpi.jasperreport.service.mapper.JasperreportTemplateMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
 /**
- * Service Implementation for managing JasperreportTemplate.
+ * Service Implementation for managing {@link JasperreportTemplate}.
  */
 @Service
 @Transactional
@@ -34,8 +36,8 @@ public class JasperreportTemplateServiceImpl implements JasperreportTemplateServ
     /**
      * Save a jasperreportTemplate.
      *
-     * @param jasperreportTemplateDTO the entity to save
-     * @return the persisted entity
+     * @param jasperreportTemplateDTO the entity to save.
+     * @return the persisted entity.
      */
     @Override
     public JasperreportTemplateDTO save(JasperreportTemplateDTO jasperreportTemplateDTO) {
@@ -48,8 +50,8 @@ public class JasperreportTemplateServiceImpl implements JasperreportTemplateServ
     /**
      * Get all the jasperreportTemplates.
      *
-     * @param pageable the pagination information
-     * @return the list of entities
+     * @param pageable the pagination information.
+     * @return the list of entities.
      */
     @Override
     @Transactional(readOnly = true)
@@ -59,28 +61,29 @@ public class JasperreportTemplateServiceImpl implements JasperreportTemplateServ
             .map(jasperreportTemplateMapper::toDto);
     }
 
+
     /**
      * Get one jasperreportTemplate by id.
      *
-     * @param id the id of the entity
-     * @return the entity
+     * @param id the id of the entity.
+     * @return the entity.
      */
     @Override
     @Transactional(readOnly = true)
-    public JasperreportTemplateDTO findOne(Long id) {
+    public Optional<JasperreportTemplateDTO> findOne(Long id) {
         log.debug("Request to get JasperreportTemplate : {}", id);
-        JasperreportTemplate jasperreportTemplate = jasperreportTemplateRepository.findOne(id);
-        return jasperreportTemplateMapper.toDto(jasperreportTemplate);
+        return jasperreportTemplateRepository.findById(id)
+            .map(jasperreportTemplateMapper::toDto);
     }
 
     /**
      * Delete the jasperreportTemplate by id.
      *
-     * @param id the id of the entity
+     * @param id the id of the entity.
      */
     @Override
     public void delete(Long id) {
         log.debug("Request to delete JasperreportTemplate : {}", id);
-        jasperreportTemplateRepository.delete(id);
+        jasperreportTemplateRepository.deleteById(id);
     }
 }

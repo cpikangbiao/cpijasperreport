@@ -1,15 +1,11 @@
 package com.cpi.jasperreport.service.dto;
-
-
 import java.time.Instant;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 import javax.persistence.Lob;
 
 /**
- * A DTO for the JasperreportTemplate entity.
+ * A DTO for the {@link com.cpi.jasperreport.domain.JasperreportTemplate} entity.
  */
 public class JasperreportTemplateDTO implements Serializable {
 
@@ -21,13 +17,14 @@ public class JasperreportTemplateDTO implements Serializable {
 
     @Lob
     private byte[] jasperreportTemplateFile;
-    private String jasperreportTemplateFileContentType;
 
+    private String jasperreportTemplateFileContentType;
     private Instant correspondentBillDate;
 
     private Boolean isUse;
 
     private Integer version;
+
 
     private Long jasperreportTemplateTypeId;
 
@@ -123,7 +120,7 @@ public class JasperreportTemplateDTO implements Serializable {
         }
 
         JasperreportTemplateDTO jasperreportTemplateDTO = (JasperreportTemplateDTO) o;
-        if(jasperreportTemplateDTO.getId() == null || getId() == null) {
+        if (jasperreportTemplateDTO.getId() == null || getId() == null) {
             return false;
         }
         return Objects.equals(getId(), jasperreportTemplateDTO.getId());
@@ -144,6 +141,8 @@ public class JasperreportTemplateDTO implements Serializable {
             ", correspondentBillDate='" + getCorrespondentBillDate() + "'" +
             ", isUse='" + isIsUse() + "'" +
             ", version=" + getVersion() +
+            ", jasperreportTemplateType=" + getJasperreportTemplateTypeId() +
+            ", jasperreportTemplateType='" + getJasperreportTemplateTypeJasperreportTemplateTypeName() + "'" +
             "}";
     }
 }
