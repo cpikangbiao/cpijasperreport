@@ -1,0 +1,45 @@
+{
+    "fluentMethods": true,
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "jasperreportTemplateType",
+            "otherEntityName": "jasperreportTemplateType",
+            "otherEntityField": "jasperreportTemplateTypeName"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "jasperreportTemplateName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "jasperreportTemplateFileName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "jasperreportTemplateFile",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "any"
+        },
+        {
+            "fieldName": "correspondentBillDate",
+            "fieldType": "Instant"
+        },
+        {
+            "fieldName": "isUse",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "version",
+            "fieldType": "Integer"
+        }
+    ],
+    "changelogDate": "20180612071135",
+    "entityTableName": "jasperreport_template",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": true,
+    "microserviceName": "cpicorrespondent"
+}

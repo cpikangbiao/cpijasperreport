@@ -1,0 +1,27 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "jasperreportTemplateTypeName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "sortNum",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "changelogDate": "20180612071134",
+    "entityTableName": "jasperreport_template_type",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": true,
+    "microserviceName": "cpicorrespondent"
+}

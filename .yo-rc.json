@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.cpi.jasperreport",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "4.14.3",
+    "baseName": "cpijasperreport",
+    "packageName": "com.cpi.jasperreport",
+    "packageFolder": "com/cpi/jasperreport",
+    "serverPort": "8077",
+    "authenticationType": "uaa",
+    "uaaBaseName": "cpiuaa",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSocialSignIn": false,
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "e7fda30524c836438b1f855404d91f419d2da991",
+    "enableTranslation": true,
+    "applicationType": "microservice",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "nativeLanguage": "en",
+    "languages": [
+      "en",
+      "zh-cn"
+    ],
+    "clientPackageManager": "yarn",
+    "skipClient": true,
+    "skipUserManagement": true
+  }
+}
